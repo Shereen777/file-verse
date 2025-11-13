@@ -7,8 +7,8 @@ max_filename_length = 010     # Maximum filename length
 
 [security]
 max_users = 50                # Maximum number of users
-admin_username = "admin"      # Default admin username
-admin_password = "admin123"   # Default admin password
+admin_username = admin      # Default admin username
+admin_password = admin123   # Default admin password
 require_auth = true           # Require authentication
 
 [server]
