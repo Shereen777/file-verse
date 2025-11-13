@@ -8,12 +8,8 @@
 
 using namespace std;
 
-// ============================================================================
-// SINGLE AVL TREE FOR USER MANAGEMENT (indexed by user_index)
-// ============================================================================
-
 struct AVLNode {
-    UserInfo user;           // Complete user data stored in the node
+    UserInfo user;
     int height;
     AVLNode* left;
     AVLNode* right;
@@ -70,7 +66,6 @@ private:
         else if (idx > node->user.user_index)
             node->right = insert_helper(node->right, user);
         else {
-            // Update existing user (e.g., for password change, last_login, etc.)
             node->user = user;
             return node;
         }
@@ -78,21 +73,17 @@ private:
         update_height(node);
         int balance = balance_factor(node);
         
-        // Left Left
         if (balance > 1 && idx < node->left->user.user_index)
             return rotate_right(node);
         
-        // Right Right
         if (balance < -1 && idx > node->right->user.user_index)
             return rotate_left(node);
         
-        // Left Right
         if (balance > 1 && idx > node->left->user.user_index) {
             node->left = rotate_left(node->left);
             return rotate_right(node);
         }
         
-        // Right Left
         if (balance < -1 && idx < node->right->user.user_index) {
             node->right = rotate_right(node->right);
             return rotate_left(node);
@@ -113,16 +104,13 @@ private:
         return find_helper(node->right, user_index);
     }
     
-    // For username search - O(n) in worst case, but we don't use this often
     AVLNode* find_by_username_helper(AVLNode* node, const string& username) {
         if (!node) return nullptr;
         
-        // Check current node
         if (strcmp(node->user.username, username.c_str()) == 0) {
             return node;
         }
         
-        // Search both subtrees
         AVLNode* left_result = find_by_username_helper(node->left, username);
         if (left_result) return left_result;
         
@@ -164,58 +152,45 @@ public:
         delete_tree(root); 
     }
     
-    // Insert/Update user - O(log n)
     void insert(const UserInfo& user) {
         root = insert_helper(root, user);
     }
     
-    // Find by index - O(log n) - PRIMARY OPERATION
     UserInfo* find_by_index(uint32_t user_index) {
         AVLNode* node = find_helper(root, user_index);
         return node ? &(node->user) : nullptr;
     }
     
-    // Find by username - O(n) - RARE ADMIN OPERATION
-    // Only used when admin searches by username
     UserInfo* find_by_username(const string& username) {
         AVLNode* node = find_by_username_helper(root, username);
         return node ? &(node->user) : nullptr;
     }
     
-    // Check if username exists (for validation during user creation)
     bool username_exists(const string& username) {
         return find_by_username(username) != nullptr;
     }
     
-    // Count active users - O(n)
     int count_active() {
         int count = 0;
         count_active_helper(root, count);
         return count;
     }
     
-    // Get all active users as array - O(n)
     void get_all_active(UserInfo* arr, int& count) {
         count = 0;
         collect_active_users_helper(root, arr, count);
     }
 };
 
-// ============================================================================
-// USER SYSTEM WRAPPER
-// ============================================================================
-
 struct UserSystem {
     UserAVL tree;
     
     uint32_t add_user(const UserInfo& user) {
-        // Check if username already exists (O(n) - but only during creation)
         if (tree.username_exists(user.username)) {
             cout << "✗ Username '" << user.username << "' already exists\n";
             return 0;
         }
         
-        // Check if index already exists (O(log n))
         if (tree.find_by_index(user.user_index) != nullptr) {
             cout << "✗ Index " << user.user_index << " already exists\n";
             return 0;
@@ -229,12 +204,10 @@ struct UserSystem {
         return user.user_index;
     }
     
-    // Primary lookup - O(log n)
     UserInfo* find_user_by_index(uint32_t index) {
         return tree.find_by_index(index);
     }
     
-    // Rare admin operation - O(n)
     UserInfo* find_user_by_username(const string& username) {
         return tree.find_by_username(username);
     }
@@ -243,7 +216,6 @@ struct UserSystem {
         return tree.count_active();
     }
     
-    // For user_list function
     void get_all_users(UserInfo** users, int* count) {
         int active_count = tree.count_active();
         
@@ -262,4 +234,4 @@ struct UserSystem {
     }
 };
 
-#endif // USER_SYSTEM_HPP
+#endif

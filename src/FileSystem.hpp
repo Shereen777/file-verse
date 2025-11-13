@@ -1,16 +1,11 @@
 #ifndef FILE_HPP
 #define FILE_HPP
 
-// ============================================================================
-// MODIFIED FILE SYSTEM NODE - With Random Child Indexing
-// ============================================================================
-
 struct FSNode;
 
-// AVL Node for children (indexed by random ID, not by name)
 struct AVLFSNode {
-    uint32_t child_id;           // Random index for each child
-    FSNode* fs_node;             // Pointer to actual file system node
+    uint32_t child_id;
+    FSNode* fs_node;
     int height;
     AVLFSNode* left;
     AVLFSNode* right;
@@ -19,7 +14,6 @@ struct AVLFSNode {
         : child_id(id), fs_node(node), height(1), left(nullptr), right(nullptr) {}
 };
 
-// Secondary tree: maps name -> child_id for quick name lookup
 struct NameMapNode {
     string name;
     uint32_t child_id;
@@ -35,8 +29,6 @@ class AVLFSTree {
 private:
     AVLFSNode* root;
     NameMapNode* name_map_root;
-    
-    // ========== ID-based tree functions ==========
     
     int height(AVLFSNode* node) {
         return node ? node->height : 0;
@@ -80,7 +72,7 @@ private:
         else if (child_id > node->child_id)
             node->right = insert_helper(node->right, child_id, fs_node);
         else
-            return node; // Duplicate
+            return node;
         
         update_height(node);
         int balance = balance_factor(node);
@@ -173,8 +165,6 @@ private:
         delete_id_tree(node->right);
         delete node;
     }
-    
-    // ========== Name-based lookup tree functions ==========
     
     int height(NameMapNode* node) {
         return node ? node->height : 0;
@@ -308,7 +298,6 @@ public:
         delete_name_tree(name_map_root);
     }
     
-    // Insert child with random ID - O(log n)
     void insert(uint32_t child_id, const string& name, FSNode* fs_node) {
         root = insert_helper(root, child_id, fs_node);
         name_map_root = insert_name_helper(name_map_root, name, child_id);
@@ -322,7 +311,6 @@ public:
     }
 
     
-    // Find by name - O(log n) + O(log n) = O(log n)
     FSNode* find(const string& name) {
         NameMapNode* name_node = find_by_name_helper(name_map_root, name);
         if (!name_node) return nullptr;
@@ -331,13 +319,11 @@ public:
         return id_node ? id_node->fs_node : nullptr;
     }
     
-    // Find by ID - O(log n)
     FSNode* find_by_id(uint32_t child_id) {
         AVLFSNode* node = find_by_id_helper(root, child_id);
         return node ? node->fs_node : nullptr;
     }
     
-    // Remove - O(log n) from both trees
     bool remove(const string& name) {
         NameMapNode* name_node = find_by_name_helper(name_map_root, name);
         if (!name_node) return false;
@@ -351,7 +337,6 @@ public:
         return deleted_id && deleted_name;
     }
     
-    // Get all children sorted by name - O(n)
     vector<FSNode*> get_all_sorted() {
         vector<FSNode*> result;
         inorder_collect(root, result);
@@ -371,16 +356,12 @@ public:
     }
 };
 
-// ============================================================================
-// UPDATED FS NODE WITH RANDOM CHILD INDEXING
-// ============================================================================
-
 struct FSNode {
     string name;
     string full_path;
     EntryType type;
     FSNode* parent;
-    AVLFSTree children;              // Indexed by random child_id
+    AVLFSTree children;
     
     string owner;
     uint32_t permissions;
@@ -390,7 +371,7 @@ struct FSNode {
     uint32_t inode;
     uint32_t start_block;
     uint32_t num_blocks;
-    uint32_t next_child_id;          // For generating random IDs
+    uint32_t next_child_id;
     
     FSNode(const string& n, EntryType t, FSNode* p = nullptr) 
         : name(n), type(t), parent(p), permissions(0755), size(0),
@@ -406,46 +387,35 @@ struct FSNode {
         }
     }
     
-    // Generate random child ID - O(1)
     uint32_t generate_child_id() {
         return (++next_child_id) + (rand() % 1000000);
     }
     
-    // O(log n) insertion with random ID
     void add_child(FSNode* child) {
         uint32_t child_id = generate_child_id();
         children.insert(child_id, child->name, child);
     }
     
-    // O(log n) search by name
     FSNode* find_child(const string& name) {
         return children.find(name);
     }
     
-    // O(log n) removal
     bool remove_child(const string& name) {
         return children.remove(name);
     }
     
-    // Get all children sorted - O(n)
     vector<FSNode*> get_children() {
         return children.get_all_sorted();
     }
     
-    // O(1) check
     bool has_children() {
         return !children.empty();
     }
     
-    // O(n) count
     int children_count() {
         return children.size();
     }
 };
-
-// ============================================================================
-// FILE SYSTEM (No changes needed - uses updated FSNode)
-// ============================================================================
 
 class FileSystem {
 private:
@@ -541,7 +511,3 @@ public:
 };
 
 #endif
-
-
-
-// testing commit linux

@@ -6,7 +6,7 @@
 #include <functional>
 #include <stdexcept>
 #include <algorithm>
-#include <list>
+#include "SinglyLinkedList.hpp"
 
 using namespace std;
 
@@ -19,7 +19,7 @@ private:
         Entry(const K& k, const V& v) : key(k), value(v) {}
     };
 
-    vector<list<Entry>> table;
+    vector<LinkedList<Entry>> table;
     size_t current_size;
     float max_load_factor;
 
@@ -29,7 +29,7 @@ private:
 
     void rehash() {
         size_t new_capacity = table.size() * 2;
-        vector<list<Entry>> new_table(new_capacity);
+        vector<LinkedList<Entry>> new_table(new_capacity);
 
         for (auto& bucket : table) {
             for (auto& entry : bucket) {
@@ -46,12 +46,14 @@ public:
 
     bool insert(const K& key, const V& value) {
         size_t index = hash_key(key);
+        
         for (auto& entry : table[index]) {
             if (entry.key == key) {
-                entry.value = value; // update existing
-                return false; // updated, not new insert
+                entry.value = value;
+                return false;
             }
         }
+        
         table[index].emplace_back(key, value);
         current_size++;
 
@@ -73,6 +75,7 @@ public:
     bool erase(const K& key) {
         size_t index = hash_key(key);
         auto& bucket = table[index];
+        
         for (auto it = bucket.begin(); it != bucket.end(); ++it) {
             if (it->key == key) {
                 bucket.erase(it);
@@ -112,7 +115,9 @@ public:
         return result;
     }
 
-    size_t size() const { return current_size; }
+    size_t size() const {
+        return current_size;
+    }
 
     void clear() {
         for (auto& bucket : table)

@@ -19,10 +19,6 @@ using namespace std;
 mt19937 IndexGenerator::rng;
 uniform_int_distribution<uint32_t> IndexGenerator::dist(100000, 999999);
 
-// ============================================================================
-// HELPER FUNCTIONS
-// ============================================================================
-
 bool parse_config(OMNIHeader& header, const string& config_path) {
     ifstream file(config_path);
     if (!file.is_open()) return false;
@@ -88,10 +84,6 @@ string generate_session_id() {
     time_t now = time(nullptr);
     return "SESSION_" + to_string(now) + "_" + to_string(counter++);
 }
-
-// ============================================================================
-// CORE SYSTEM FUNCTIONS
-// ============================================================================
 
 int fs_init(void** instance, const char* omni_path, const char* config_path) {
     OMNIInstance* inst = new OMNIInstance();
@@ -202,10 +194,6 @@ int fs_format(const char* omni_path, const char* config_path) {
     void* instance;
     return fs_init(&instance, omni_path, config_path);
 }
-
-// ============================================================================
-// USER MANAGEMENT FUNCTIONS
-// ============================================================================
 
 int user_login(void** session, void* instance, uint32_t user_index, const char* password) {
     if (!instance || !password) {
@@ -367,10 +355,6 @@ int get_session_info(void* session, SessionInfo* info) {
     
     return static_cast<int>(OFSErrorCodes::SUCCESS);
 }
-
-// ============================================================================
-// FILE OPERATIONS
-// ============================================================================
 
 int file_create(void* session, const char* path, const char* data, size_t size) {
     if (!session || !path) {
@@ -627,10 +611,6 @@ int file_rename(void* session, const char* old_path, const char* new_path) {
     return static_cast<int>(OFSErrorCodes::SUCCESS);
 }
 
-// ============================================================================
-// DIRECTORY OPERATIONS
-// ============================================================================
-
 int dir_create(void* session, const char* path) {
     if (!session || !path) {
         return static_cast<int>(OFSErrorCodes::ERROR_INVALID_OPERATION);
@@ -769,28 +749,25 @@ int dir_exists(void* session, const char* path) {
     return static_cast<int>(OFSErrorCodes::SUCCESS);
 }
 
-// ============================================================================
-// INFORMATION FUNCTIONS
-// ============================================================================
 
-    void count_files_recursive(FSNode* node, uint32_t& files, uint32_t& dirs, uint64_t& total_size) {
-        if (!node) return;
+void count_files_recursive(FSNode* node, uint32_t& files, uint32_t& dirs, uint64_t& total_size) {
+    if (!node) return;
 
-        if (node->type == EntryType::DIRECTORY) {
-            dirs++;
+    if (node->type == EntryType::DIRECTORY) {
+        dirs++;
 
-            // Collect children from AVL tree
-            std::vector<FSNode*> children;
-            node->children.inorder_collect(node->children.getRoot(),children);  // Assuming 'children_root' is your AVL root
+        // Collect children from AVL tree
+        std::vector<FSNode*> children;
+        node->children.inorder_collect(node->children.getRoot(),children);  // Assuming 'children_root' is your AVL root
 
-            for (auto* child : children) {
-                count_files_recursive(child, files, dirs, total_size);
-            }
-        } else {
-            files++;
-            total_size += node->size;
+        for (auto* child : children) {
+            count_files_recursive(child, files, dirs, total_size);
         }
+    } else {
+        files++;
+        total_size += node->size;
     }
+}
 
 
 int get_metadata(void* session, const char* path, FileMetadata* meta) {
@@ -895,10 +872,6 @@ int get_stats(void* session, FSStats* stats) {
     
     return static_cast<int>(OFSErrorCodes::SUCCESS);
 }
-
-// ============================================================================
-// UTILITY FUNCTIONS
-// ============================================================================
 
 void free_buffer(void* buffer) {
     if (buffer) {

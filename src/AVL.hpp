@@ -13,10 +13,6 @@
 
 using namespace std;
 
-// ============================================================================
-// AVL TREE FOR INDEX LOOKUP (index -> UserInfo)
-// ============================================================================
-
 struct AVLUserNode {
     uint32_t user_index;
     UserInfo* user_data;
@@ -122,10 +118,6 @@ public:
         return node ? node->user_data : nullptr;
     }
 };
-
-// ============================================================================
-// AVL TREE FOR USERNAME LOOKUP (username -> index)
-// ============================================================================
 
 struct AVLNameNode {
     string username;

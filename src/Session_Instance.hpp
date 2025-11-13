@@ -16,9 +16,6 @@
 #include "FreeSpaceManager.hpp"
 #include "FileSystem.hpp"
 using namespace std;
-// ============================================================================
-// SESSION & INSTANCE
-// ============================================================================
 
 struct OMNIInstance;
 
