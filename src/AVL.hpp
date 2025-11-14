@@ -104,19 +104,6 @@ private:
         return find_helper(node->right, user_index);
     }
     
-    AVLNode* find_by_username_helper(AVLNode* node, const string& username) {
-        if (!node) return nullptr;
-        
-        if (strcmp(node->user.username, username.c_str()) == 0) {
-            return node;
-        }
-        
-        AVLNode* left_result = find_by_username_helper(node->left, username);
-        if (left_result) return left_result;
-        
-        return find_by_username_helper(node->right, username);
-    }
-    
     void count_active_helper(AVLNode* node, int& count) {
         if (!node) return;
         
@@ -161,13 +148,8 @@ public:
         return node ? &(node->user) : nullptr;
     }
     
-    UserInfo* find_by_username(const string& username) {
-        AVLNode* node = find_by_username_helper(root, username);
-        return node ? &(node->user) : nullptr;
-    }
-    
-    bool username_exists(const string& username) {
-        return find_by_username(username) != nullptr;
+    bool user_exists(const uint32_t& ind) {
+        return find_by_index(ind) != nullptr;
     }
     
     int count_active() {

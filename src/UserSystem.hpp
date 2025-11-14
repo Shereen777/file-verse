@@ -13,7 +13,7 @@ struct UserSystem {
     UserAVL tree;
     
     uint32_t add_user(const UserInfo& user) {
-        if (tree.username_exists(user.username)) {
+        if (tree.user_exists(user.user_index)) {
             cout << "✗ Username '" << user.username << "' already exists\n";
             return 0;
         }
@@ -35,9 +35,9 @@ struct UserSystem {
         return tree.find_by_index(index);
     }
     
-    UserInfo* find_user_by_username(const string& username) {
-        return tree.find_by_username(username);
-    }
+    // UserInfo* find_user_by_username(const string& username) {
+    //     return tree.user_exists(userna.user_index;
+    // }
     
     int get_user_count() {
         return tree.count_active();
