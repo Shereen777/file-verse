@@ -33,7 +33,7 @@ private:
 
         for (auto& bucket : table) {
             for (auto& entry : bucket) {
-                size_t new_index = std::hash<K>{}(entry.key) % new_capacity;
+                size_t new_index = hash<K>()(entry.key) % new_capacity;
                 new_table[new_index].push_back(entry);
             }
         }
