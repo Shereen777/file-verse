@@ -75,7 +75,7 @@ void print_file_entry(const FileEntry& entry) {
     cout << "\n";
 }
 
-int main() {
+int main1() {
     cout << "\n" << string(70, '=') << "\n";
     cout << "  OMNIFS - Complete File System Demonstration with User Isolation\n";
     cout << string(70, '=') << "\n\n";
@@ -386,3 +386,107 @@ int main() {
     
     return 0;
 }
+
+// #include <iostream>
+// #include <fstream>
+// #include <csignal>
+// #include <thread>
+// #include <chrono>
+// #include "Session_Instance.hpp"
+// #include "file_system.cpp"
+// #include "Socket_Handler.hpp"
+// #include "TCP_Server.hpp"
+// #include "TCP_Client.hpp"
+
+// using namespace std;
+
+// TCPServer* global_server = nullptr;
+
+// void signal_handler(int signal) {
+//     cout << "\n[SIGNAL] Received interrupt signal (" << signal << ")\n";
+//     if (global_server) {
+//         cout << "[SERVER] Shutting down...\n";
+//         global_server->stop();
+//     }
+//     exit(0);
+// }
+
+// int main(int argc, char* argv[]) {
+//     cout << "\n" << string(70, '=') << "\n";
+//     cout << "  OMNIFS - Network File System Server\n";
+//     cout << string(70, '=') << "\n\n";
+    
+//     // Setup signal handler for graceful shutdown
+//     signal(SIGINT, signal_handler);
+//     signal(SIGTERM, signal_handler);
+    
+//     // Filesystem initialization
+//     const char* omni_path = "omnifs.dat";
+//     const char* config_path = "omnifs.conf";
+    
+//     // Create config file
+//     {
+//         ofstream conf(config_path);
+//         conf << "[filesystem]\n";
+//         conf << "total_size = 2097152\n";
+//         conf << "header_size = 4096\n";
+//         conf << "block_size = 4096\n";
+//         conf << "max_users = 100\n";
+//         conf << "\n[security]\n";
+//         conf << "admin_username = admin\n";
+//         conf << "admin_password = password123\n";
+//         conf << "require_auth = true\n";
+//         conf.close();
+//     }
+    
+//     cout << "[INIT] Initializing filesystem...\n";
+//     void* instance = nullptr;
+//     int result = fs_init(&instance, omni_path, config_path);
+    
+//     if (result != static_cast<int>(OFSErrorCodes::SUCCESS)) {
+//         cerr << "[ERROR] Filesystem initialization failed: " << get_error_message(result) << "\n";
+//         return 1;
+//     }
+    
+//     OMNIInstance* inst = static_cast<OMNIInstance*>(instance);
+//     cout << "[INIT] Filesystem ready\n";
+//     cout << "[INIT] Total size: " << inst->header.total_size << " bytes\n";
+//     cout << "[INIT] Block size: " << inst->header.block_size << " bytes\n";
+//     cout << "[INIT] Max users: " << inst->header.max_users << "\n\n";
+    
+//     // Start TCP server
+//     int port = 9999;
+    
+//     if (argc > 1) {
+//         port = atoi(argv[1]);
+//     }
+    
+//     global_server = new TCPServer(port, inst);
+    
+//     if (!global_server->start()) {
+//         cerr << "[ERROR] Failed to start TCP server\n";
+//         fs_shutdown(instance);
+//         return 1;
+//     }
+    
+//     cout << "\n[SERVER] Server is running. Press Ctrl+C to stop.\n";
+//     cout << "[SERVER] Listening on 127.0.0.1:" << port << "\n";
+//     cout << "[SERVER] Awaiting connections...\n\n";
+    
+//     // Keep server running
+//     while (global_server->is_running()) {
+//         this_thread::sleep_for(chrono::seconds(1));
+//     }
+    
+//     // Cleanup
+//     cout << "[CLEANUP] Shutting down filesystem...\n";
+//     fs_shutdown(instance);
+//     delete global_server;
+    
+//     cout << "[CLEANUP] Server stopped gracefully\n";
+//     cout << "\n" << string(70, '=') << "\n";
+//     cout << "  Server shutdown complete\n";
+//     cout << string(70, '=') << "\n\n";
+    
+//     return 0;
+// }
