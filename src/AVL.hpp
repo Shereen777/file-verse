@@ -104,6 +104,66 @@ private:
         return find_helper(node->right, user_index);
     }
     
+    AVLNode* find_min(AVLNode* node) {
+        while (node && node->left) {
+            node = node->left;
+        }
+        return node;
+    }
+    
+    AVLNode* remove_helper(AVLNode* node, uint32_t user_index, bool& deleted) {
+        if (!node) {
+            deleted = false;
+            return nullptr;
+        }
+        
+        if (user_index < node->user.user_index) {
+            node->left = remove_helper(node->left, user_index, deleted);
+        } else if (user_index > node->user.user_index) {
+            node->right = remove_helper(node->right, user_index, deleted);
+        } else {
+            deleted = true;
+            
+            if (!node->left || !node->right) {
+                AVLNode* temp = node->left ? node->left : node->right;
+                if (!temp) {
+                    delete node;
+                    return nullptr;
+                }
+                AVLNode* to_delete = node;
+                node = temp;
+                delete to_delete;
+            } else {
+                AVLNode* temp = find_min(node->right);
+                node->user = temp->user;
+                node->right = remove_helper(node->right, temp->user.user_index, deleted);
+            }
+        }
+        
+        if (!node) return node;
+        
+        update_height(node);
+        int balance = balance_factor(node);
+        
+        if (balance > 1 && balance_factor(node->left) >= 0)
+            return rotate_right(node);
+        
+        if (balance > 1 && balance_factor(node->left) < 0) {
+            node->left = rotate_left(node->left);
+            return rotate_right(node);
+        }
+        
+        if (balance < -1 && balance_factor(node->right) <= 0)
+            return rotate_left(node);
+        
+        if (balance < -1 && balance_factor(node->right) > 0) {
+            node->right = rotate_right(node->right);
+            return rotate_left(node);
+        }
+        
+        return node;
+    }
+    
     void count_active_helper(AVLNode* node, int& count) {
         if (!node) return;
         
@@ -150,6 +210,12 @@ public:
     
     bool user_exists(const uint32_t& ind) {
         return find_by_index(ind) != nullptr;
+    }
+    
+    bool remove(uint32_t user_index) {
+        bool deleted = false;
+        root = remove_helper(root, user_index, deleted);
+        return deleted;
     }
     
     int count_active() {

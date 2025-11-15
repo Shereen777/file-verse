@@ -242,9 +242,8 @@ int user_logout(void* session) {
     cout << "✓ User logged out\n";
     return static_cast<int>(OFSErrorCodes::SUCCESS);
 }
-
-int user_create(void* session, const char* username, const char* password, UserRole role, uint32_t* out_index) {
-    if (!session || !username || !password || !out_index) {
+int user_create(void* session, const char* username, const char* password, UserRole role, uint32_t &out_index) {
+    if (!session || !username || !password) {
         return static_cast<int>(OFSErrorCodes::ERROR_INVALID_OPERATION);
     }
     
@@ -255,10 +254,6 @@ int user_create(void* session, const char* username, const char* password, UserR
     }
     
     OMNIInstance* inst = sess->instance;
-    
-    // if (inst->user_system.find_user_by_index(out_index) != nullptr) {
-    //     return static_cast<int>(OFSErrorCodes::ERROR_FILE_EXISTS);
-    // }
     
     uint32_t new_index = IndexGenerator::generate();
     while (inst->user_system.find_user_by_index(new_index) != nullptr) {
@@ -280,9 +275,18 @@ int user_create(void* session, const char* username, const char* password, UserR
         return static_cast<int>(OFSErrorCodes::ERROR_INVALID_OPERATION);
     }
     
-    *out_index = new_index;
+    // NEW: Create user's home directory
+    if (!inst->file_system.create_user_directory(username)) {
+        // Rollback user creation if directory creation fails
+        inst->user_system.tree.remove(new_index);
+        return static_cast<int>(OFSErrorCodes::ERROR_IO_ERROR);
+    }
+    
+    out_index = new_index;
     sess->operations_count++;
     sess->last_activity = time(nullptr);
+    
+    cout << "✓ User directory created: /users/" << username << "\n";
     
     return static_cast<int>(OFSErrorCodes::SUCCESS);
 }
@@ -315,7 +319,7 @@ int user_delete(void* session, uint32_t user_index) {
 }
 
 int user_list(void* session, UserInfo** users, int* count) {
-    if (!session || !users || !count) {
+    if (!session or !users or !count) {
         return static_cast<int>(OFSErrorCodes::ERROR_INVALID_OPERATION);
     }
     

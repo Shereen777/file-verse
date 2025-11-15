@@ -20,7 +20,7 @@ int fs_format(const char* omni_path, const char* config_path);
 int user_login(void** session, void* instance, uint32_t user_index, const char* password);
 int user_logout(void* session);
 
-int user_create(void* session, const char* username, const char* password, UserRole role, uint32_t* out_index);
+int user_create(void* session, const char* username, const char* password, UserRole role, uint32_t &out_index);
 int user_delete(void* session, uint32_t user_index);  // Delete by index
 int user_list(void* session, UserInfo** users, int* count);
 int get_session_info(void* session, SessionInfo* info);
@@ -45,7 +45,6 @@ int get_stats(void* session, FSStats* stats);
 void free_buffer(void* buffer);
 const char* get_error_message(int error_code);
 
-// ⚠️ NEW: Get admin index from instance
 uint32_t get_admin_index(void* instance);
 
 // Helper functions
@@ -136,8 +135,8 @@ int main() {
     // Create users
     cout << "[3] Creating users...\n";
     uint32_t user1_idx, user2_idx;
-    user_create(admin_session, "alice", "pass_alice", UserRole::NORMAL, &user1_idx);
-    user_create(admin_session, "bob", "pass_bob", UserRole::NORMAL, &user2_idx);
+    user_create(admin_session, "alice", "pass_alice", UserRole::NORMAL, user1_idx);
+    user_create(admin_session, "bob", "pass_bob", UserRole::NORMAL, user2_idx);
     cout << "\n";
     
     // List users

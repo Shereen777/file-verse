@@ -35,9 +35,19 @@ struct UserSystem {
         return tree.find_by_index(index);
     }
     
-    // UserInfo* find_user_by_username(const string& username) {
-    //     return tree.user_exists(userna.user_index;
-    // }
+    bool remove(uint32_t user_index) {
+        UserInfo* user = tree.find_by_index(user_index);
+        if (!user) {
+            cout << "✗ User with index " << user_index << " not found\n";
+            return false;
+        }
+        
+        // Mark as inactive instead of removing from tree
+        user->is_active = 0;
+        cout << "✓ User removed: " << user->username << " (Index: " << user_index << ")\n";
+        
+        return true;
+    }
     
     int get_user_count() {
         return tree.count_active();

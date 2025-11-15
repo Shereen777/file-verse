@@ -1,7 +1,7 @@
 #ifndef FILE_HPP
 #define FILE_HPP
 
-struct FSNode;
+struct FSNode; //its basically the directory
 
 struct AVLFSNode {
     uint32_t child_id;
@@ -372,7 +372,7 @@ struct FSNode {
     uint32_t start_block;
     uint32_t num_blocks;
     uint32_t next_child_id;
-    
+
     FSNode(const string& n, EntryType t, FSNode* p = nullptr) 
         : name(n), type(t), parent(p), permissions(0755), size(0),
           created_time(0), modified_time(0), inode(0), 
@@ -446,6 +446,27 @@ private:
         return result;
     }
     
+    // NEW: Helper to resolve user-specific paths
+    string resolve_user_path(const string& path, const string& username, bool is_admin) {
+        // Admins can access any path
+        if (is_admin) {
+            return path;
+        }
+        
+        // If path starts with /users/, allow it as-is (for explicit cross-user access by admins)
+        if (path.find("/users/") == 0) {
+            return path;
+        }
+        
+        // If path is absolute but not in /users/, prepend user's directory
+        if (path[0] == '/') {
+            return "/users/" + username + path;
+        }
+        
+        // Relative paths get prepended with user's directory
+        return "/users/" + username + "/" + path;
+    }
+    
 public:
     FileSystem() : next_inode(1) {
         root = new FSNode("/", EntryType::DIRECTORY, nullptr);
@@ -456,6 +477,44 @@ public:
     
     ~FileSystem() {
         delete_tree(root);
+    }
+    
+    // NEW: Initialize /users directory structure
+    bool ensure_users_directory() {
+        FSNode* users_dir = root->find_child("users");
+        if (!users_dir) {
+            users_dir = new FSNode("users", EntryType::DIRECTORY, root);
+            users_dir->owner = "system";
+            users_dir->inode = next_inode++;
+            users_dir->created_time = time(nullptr);
+            users_dir->modified_time = users_dir->created_time;
+            users_dir->permissions = 0755;
+            root->add_child(users_dir);
+        }
+        return true;
+    }
+    
+    // NEW: Create user home directory
+    bool create_user_directory(const string& username) {
+        ensure_users_directory();
+        
+        FSNode* users_dir = root->find_child("users");
+        if (!users_dir) return false;
+        
+        // Check if user directory already exists
+        if (users_dir->find_child(username)) {
+            return true; // Already exists, that's fine
+        }
+        
+        FSNode* user_dir = new FSNode(username, EntryType::DIRECTORY, users_dir);
+        user_dir->owner = username;
+        user_dir->inode = next_inode++;
+        user_dir->created_time = time(nullptr);
+        user_dir->modified_time = user_dir->created_time;
+        user_dir->permissions = 0755;
+        users_dir->add_child(user_dir);
+        
+        return true;
     }
     
     FSNode* find_node(const string& path) {
@@ -469,6 +528,12 @@ public:
             if (!current) return nullptr;
         }
         return current;
+    }
+    
+    // NEW: Find node with user context
+    FSNode* find_node_for_user(const string& path, const string& username, bool is_admin) {
+        string resolved_path = resolve_user_path(path, username, is_admin);
+        return find_node(resolved_path);
     }
     
     FSNode* create_node(const string& path, EntryType type, const string& owner) {
@@ -494,6 +559,12 @@ public:
         return node;
     }
     
+    // NEW: Create node with user context
+    FSNode* create_node_for_user(const string& path, EntryType type, const string& owner, bool is_admin) {
+        string resolved_path = resolve_user_path(path, owner, is_admin);
+        return create_node(resolved_path, type, owner);
+    }
+    
     bool delete_node(const string& path) {
         FSNode* node = find_node(path);
         if (!node || node == root) return false;
@@ -505,6 +576,12 @@ public:
         node->parent->remove_child(node->name);
         delete node;
         return true;
+    }
+    
+    // NEW: Delete node with user context
+    bool delete_node_for_user(const string& path, const string& username, bool is_admin) {
+        string resolved_path = resolve_user_path(path, username, is_admin);
+        return delete_node(resolved_path);
     }
     
     FSNode* get_root() { return root; }
