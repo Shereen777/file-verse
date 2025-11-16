@@ -218,7 +218,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     
-    cout << "[2] Logging in as admin (user_index: 100000)...\n";
+    cout << "[2] Logging in as admin (user_index: 191110)...\n";
     if (client.login(191110, "password123")) {
         cout << "✓ Login successful (Session: " << client.get_session_id() << ")\n\n";
     } else {

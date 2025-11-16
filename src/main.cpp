@@ -396,12 +396,26 @@
 #include <map>
 #include <sstream>
 #include <fstream>
+#include <pthread.h>
 #include "file_system.cpp"
+#include "BoundedBlockingQueue.hpp"
 
 using namespace std;
 
 void* fs_instance = nullptr;
 map<string, void*> active_sessions;
+pthread_mutex_t sessions_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+struct ClientRequest {
+    int client_fd;
+    string request_data;
+    
+    ClientRequest() : client_fd(-1) {}
+    ClientRequest(int fd, const string& data) : client_fd(fd), request_data(data) {}
+};
+
+BoundedBlockingQueue<ClientRequest>* request_queue = nullptr;
+bool server_running = true;
 
 string json_escape(const string& str) {
     string result;
@@ -484,20 +498,28 @@ string handle_login(const string& params, string& session_id) {
     
     if (result == static_cast<int>(OFSErrorCodes::SUCCESS)) {
         session_id = "SESSION_" + to_string(time(nullptr)) + "_" + to_string(user_index);
+        
+        pthread_mutex_lock(&sessions_mutex);
         active_sessions[session_id] = session;
+        pthread_mutex_unlock(&sessions_mutex);
+        
         return "{\"session_id\":\"" + session_id + "\",\"user_index\":" + to_string(user_index) + "}";
     }
     return "{}";
 }
 
 string handle_logout(const string& session_id) {
+    pthread_mutex_lock(&sessions_mutex);
     auto it = active_sessions.find(session_id);
     if (it == active_sessions.end()) {
+        pthread_mutex_unlock(&sessions_mutex);
         return "{\"logged_out\":false}";
     }
     
     user_logout(it->second);
     active_sessions.erase(it);
+    pthread_mutex_unlock(&sessions_mutex);
+    
     return "{\"logged_out\":true}";
 }
 
@@ -652,8 +674,12 @@ string process_request(const string& request) {
     }
     
     void* session = nullptr;
-    if (!session_id.empty() && active_sessions.find(session_id) != active_sessions.end()) {
-        session = active_sessions[session_id];
+    if (!session_id.empty()) {
+        pthread_mutex_lock(&sessions_mutex);
+        if (active_sessions.find(session_id) != active_sessions.end()) {
+            session = active_sessions[session_id];
+        }
+        pthread_mutex_unlock(&sessions_mutex);
     }
     
     int result = 0;
@@ -729,9 +755,42 @@ string process_request(const string& request) {
     return create_error_response(operation, request_id, result);
 }
 
+void* worker_thread(void* arg) {
+    int thread_id = *((int*)arg);
+    cout << "Worker thread " << thread_id << " started\n";
+    
+    while (server_running) {
+        ClientRequest req = request_queue->dequeue();
+        
+        if (req.client_fd == -1) break;
+        
+        string response = process_request(req.request_data);
+        send(req.client_fd, response.c_str(), response.length(), 0);
+        close(req.client_fd);
+    }
+    
+    cout << "Worker thread " << thread_id << " stopped\n";
+    return nullptr;
+}
+
 int main(int argc, char* argv[]) {
     int port = 8080;
+    int num_workers = 4;
+    int queue_size = 100;
+    
     if (argc > 1) port = atoi(argv[1]);
+    if (argc > 2) num_workers = atoi(argv[2]);
+    if (argc > 3) queue_size = atoi(argv[3]);
+    
+    request_queue = new BoundedBlockingQueue<ClientRequest>(queue_size);
+    
+    pthread_t* workers = new pthread_t[num_workers];
+    int* worker_ids = new int[num_workers];
+    
+    for (int i = 0; i < num_workers; i++) {
+        worker_ids[i] = i;
+        pthread_create(&workers[i], nullptr, worker_thread, &worker_ids[i]);
+    }
     
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd < 0) {
@@ -752,14 +811,20 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     
-    if (listen(server_fd, 10) < 0) {
+    if (listen(server_fd, 50) < 0) {
         cerr << "Listen failed\n";
         return 1;
     }
     
-    cout << "OMNIFS Server running on port " << port << "\n";
+    cout << "========================================\n";
+    cout << "OMNIFS Server Configuration:\n";
+    cout << "  Port: " << port << "\n";
+    cout << "  Worker Threads: " << num_workers << "\n";
+    cout << "  Queue Size: " << queue_size << "\n";
+    cout << "========================================\n";
+    cout << "Server is running... Press Ctrl+C to stop\n\n";
     
-    while (true) {
+    while (server_running) {
         sockaddr_in client_addr;
         socklen_t client_len = sizeof(client_addr);
         int client_fd = accept(server_fd, (sockaddr*)&client_addr, &client_len);
@@ -771,15 +836,29 @@ int main(int argc, char* argv[]) {
         
         if (bytes_read > 0) {
             buffer[bytes_read] = '\0';
-            string request(buffer);
-            string response = process_request(request);
-            send(client_fd, response.c_str(), response.length(), 0);
+            ClientRequest req(client_fd, string(buffer));
+            request_queue->enqueue(req);
+        } else {
+            close(client_fd);
         }
-        
-        close(client_fd);
     }
+    
+    server_running = false;
+    for (int i = 0; i < num_workers; i++) {
+        request_queue->enqueue(ClientRequest(-1, ""));
+    }
+    
+    for (int i = 0; i < num_workers; i++) {
+        pthread_join(workers[i], nullptr);
+    }
+    
+    delete[] workers;
+    delete[] worker_ids;
+    delete request_queue;
     
     if (fs_instance) fs_shutdown(fs_instance);
     close(server_fd);
+    
+    cout << "\nServer shutdown complete\n";
     return 0;
 }
