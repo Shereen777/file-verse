@@ -7,10 +7,6 @@
 
 using namespace std;
 
-// ============================================================================
-// ENUMERATIONS
-// ============================================================================
-
 enum class UserRole : uint32_t {
     NORMAL = 0,
     ADMIN = 1
@@ -48,10 +44,6 @@ enum class FilePermissions : uint32_t {
     OTHERS_EXECUTE = 0001
 };
 
-// ============================================================================
-// DATA STRUCTURES
-// ============================================================================
-
 struct OMNIHeader {
     char magic[8];
     uint32_t format_version;
@@ -71,11 +63,10 @@ struct OMNIHeader {
     uint32_t file_state_storage_offset;
     uint32_t change_log_offset;
     
-    // ⚠️ ADDED: Admin credentials and index
     char admin_username[32];
     char admin_password[64];
     uint8_t require_auth;
-    uint32_t admin_index;  // Admin's random index
+    uint32_t admin_index;
     
     uint8_t reserved[291];  // Adjusted to maintain 512 bytes total
 
@@ -95,7 +86,6 @@ struct OMNIHeader {
     }
 };
 
-// ⚠️ MODIFIED: Added user_index field
 struct UserInfo {
     char username[32];
     char password_hash[64];
@@ -104,7 +94,7 @@ struct UserInfo {
     uint64_t created_time;
     uint64_t last_login;
     uint8_t is_active;
-    uint8_t reserved[19];       // Adjusted to maintain 128 bytes total
+    uint8_t reserved[19];
 
     UserInfo() = default;
     
@@ -116,7 +106,7 @@ struct UserInfo {
         password_hash[sizeof(password_hash) - 1] = '\0';
         memset(reserved, 0, sizeof(reserved));
     }
-};
+};//128 bytes
 
 struct FileEntry {
     char name[256];
@@ -202,4 +192,4 @@ struct FSStats {
     }
 };
 
-#endif // ODF_TYPES_HPP
+#endif
