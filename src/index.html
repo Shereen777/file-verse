@@ -12,28 +12,31 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
             padding: 20px;
+            color: #2c3e50;
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-radius: 20px;
+            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            border: 1px solid #e8f0f7;
         }
 
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            padding: 35px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
         }
 
         .header h1 {
@@ -41,23 +44,31 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
         .status-badge {
             display: inline-block;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 700;
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
         .status-badge.connected {
-            background: #10b981;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
         }
 
         .status-badge.disconnected {
-            background: #ef4444;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
         }
 
         .main-content {
@@ -66,39 +77,44 @@
         }
 
         .sidebar {
-            width: 280px;
-            background: #f8fafc;
+            width: 260px;
+            background: linear-gradient(180deg, #f8fafc 0%, #eef2f5 100%);
             border-right: 1px solid #e2e8f0;
-            padding: 20px;
+            padding: 24px 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.03);
         }
 
         .nav-item {
-            padding: 14px 18px;
-            margin-bottom: 8px;
-            border-radius: 8px;
+            padding: 14px 24px;
+            margin: 6px 12px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             gap: 12px;
             font-weight: 500;
             color: #64748b;
+            font-size: 15px;
         }
 
         .nav-item:hover {
-            background: #e2e8f0;
-            color: #334155;
+            background: rgba(102, 126, 234, 0.08);
+            color: #667eea;
+            transform: translateX(4px);
         }
 
         .nav-item.active {
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
         }
 
         .content-area {
             flex: 1;
-            padding: 30px;
+            padding: 35px;
             overflow-y: auto;
+            background: #fafbfc;
         }
 
         .view {
@@ -107,21 +123,34 @@
 
         .view.active {
             display: block;
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .card {
             background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e8f0f7;
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            border-color: #d4e4f7;
         }
 
         .card h2 {
             font-size: 24px;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
             color: #1e293b;
+            font-weight: 700;
         }
 
         .form-group {
@@ -134,74 +163,99 @@
             font-weight: 600;
             color: #475569;
             font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .form-group input, .form-group select, .form-group textarea {
+        .form-group textarea, .form-group input, .form-group select {
             width: 100%;
             padding: 12px 16px;
             border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 14px;
-            transition: border-color 0.2s;
+            transition: all 0.3s;
+            background: white;
+            color: #1e293b;
+            font-family: 'Courier New', monospace;
         }
 
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        .form-group textarea:focus, .form-group input:focus, .form-group select:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: #f8fafc;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 200px;
         }
 
         .form-group small {
             display: block;
-            margin-top: 4px;
+            margin-top: 6px;
             font-size: 12px;
-            color: #64748b;
+            color: #94a3b8;
         }
 
         .btn {
             padding: 12px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 13px;
         }
 
         .btn-primary {
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
         }
 
         .btn-primary:hover {
-            background: #5568d3;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
         }
 
         .btn-secondary {
-            background: #64748b;
-            color: white;
+            background: #e2e8f0;
+            color: #475569;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         .btn-secondary:hover {
-            background: #475569;
+            background: #cbd5e1;
+            transform: translateY(-2px);
         }
 
         .btn-danger {
-            background: #ef4444;
+            background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
             color: white;
+            box-shadow: 0 6px 20px rgba(248, 113, 113, 0.3);
         }
 
         .btn-danger:hover {
-            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(248, 113, 113, 0.4);
         }
 
         .btn-success {
-            background: #10b981;
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
             color: white;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
         }
 
         .table {
@@ -211,48 +265,55 @@
         }
 
         .table th {
-            background: #f8fafc;
-            padding: 14px;
+            background: linear-gradient(180deg, #f8fafc 0%, #eef2f5 100%);
+            padding: 16px;
             text-align: left;
-            font-weight: 600;
+            font-weight: 700;
             color: #475569;
             border-bottom: 2px solid #e2e8f0;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
         }
 
         .table td {
-            padding: 14px;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 16px;
+            border-bottom: 1px solid #e8f0f7;
+            color: #475569;
         }
 
         .table tr:hover {
             background: #f8fafc;
+            box-shadow: inset 0 2px 8px rgba(102, 126, 234, 0.05);
         }
 
         .badge {
             display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
+            padding: 6px 12px;
+            border-radius: 8px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         .badge-admin {
-            background: #dbeafe;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
             color: #1e40af;
         }
 
         .badge-user {
-            background: #d1fae5;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
             color: #065f46;
         }
 
         .badge-file {
-            background: #fef3c7;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
             color: #92400e;
         }
 
         .badge-directory {
-            background: #ddd6fe;
+            background: linear-gradient(135deg, #e9d5ff 0%, #ddd6fe 100%);
             color: #5b21b6;
         }
 
@@ -267,11 +328,14 @@
 
         .breadcrumb-item {
             cursor: pointer;
-            transition: color 0.2s;
+            transition: all 0.2s;
+            color: #667eea;
+            font-weight: 500;
         }
 
         .breadcrumb-item:hover {
-            color: #667eea;
+            color: #764ba2;
+            text-decoration: underline;
         }
 
         .breadcrumb-separator {
@@ -280,23 +344,30 @@
 
         .alert {
             padding: 16px;
-            border-radius: 8px;
+            border-radius: 12px;
             margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 12px;
+            animation: slideDown 0.3s ease-out;
+            border-left: 4px solid;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .alert-success {
             background: #d1fae5;
             color: #065f46;
-            border: 1px solid #a7f3d0;
+            border-left-color: #10b981;
         }
 
         .alert-error {
             background: #fee2e2;
             color: #991b1b;
-            border: 1px solid #fecaca;
+            border-left-color: #ef4444;
         }
 
         .modal {
@@ -306,24 +377,34 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.4);
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(4px);
         }
 
         .modal.active {
             display: flex;
+            animation: fadeIn 0.3s ease-in;
         }
 
         .modal-content {
             background: white;
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 30px;
             max-width: 500px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
+            border: 1px solid #e8f0f7;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .modal-content h2 {
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-weight: 700;
         }
 
         .stats-grid {
@@ -336,20 +417,32 @@
         .stat-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 24px;
-            border-radius: 12px;
+            padding: 28px;
+            border-radius: 16px;
             text-align: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
         }
 
         .stat-value {
             font-size: 36px;
-            font-weight: bold;
-            margin-bottom: 8px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
         }
 
         .stat-label {
             font-size: 14px;
             opacity: 0.9;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .action-buttons {
@@ -361,13 +454,31 @@
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #64748b;
+            color: #94a3b8;
         }
 
         .empty-state-icon {
             font-size: 64px;
             margin-bottom: 16px;
-            opacity: 0.3;
+            opacity: 0.4;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
     </style>
 </head>
@@ -413,7 +524,7 @@
                             <input type="text" id="omniPath" value="omnifs.dat">
                         </div>
                         <button class="btn btn-primary" onclick="initializeFS()">
-                            Initialize & Connect
+                            ⚡ Initialize & Connect
                         </button>
                     </div>
                     <div id="connectionMsg"></div>
@@ -483,11 +594,11 @@
             </div>
             <div class="form-group">
                 <label>Content</label>
-                <textarea id="newFileContent" rows="6" placeholder="File content..."></textarea>
+                <textarea id="newFileContent" placeholder="File content..."></textarea>
             </div>
             <div class="action-buttons">
-                <button class="btn btn-success" onclick="createFile()">Create</button>
-                <button class="btn btn-secondary" onclick="closeModal('createFileModal')">Cancel</button>
+                <button class="btn btn-success" onclick="createFile()">✓ Create</button>
+                <button class="btn btn-secondary" onclick="closeModal('createFileModal')">✕ Cancel</button>
             </div>
         </div>
     </div>
@@ -500,8 +611,8 @@
                 <input type="text" id="newDirName" placeholder="new_folder">
             </div>
             <div class="action-buttons">
-                <button class="btn btn-success" onclick="createDirectory()">Create</button>
-                <button class="btn btn-secondary" onclick="closeModal('createDirModal')">Cancel</button>
+                <button class="btn btn-success" onclick="createDirectory()">✓ Create</button>
+                <button class="btn btn-secondary" onclick="closeModal('createDirModal')">✕ Cancel</button>
             </div>
         </div>
     </div>
@@ -525,8 +636,8 @@
                 </select>
             </div>
             <div class="action-buttons">
-                <button class="btn btn-success" onclick="createUser()">Create</button>
-                <button class="btn btn-secondary" onclick="closeModal('createUserModal')">Cancel</button>
+                <button class="btn btn-success" onclick="createUser()">✓ Create</button>
+                <button class="btn btn-secondary" onclick="closeModal('createUserModal')">✕ Cancel</button>
             </div>
         </div>
     </div>
@@ -535,12 +646,12 @@
         <div class="modal-content">
             <h2 id="viewFileTitle">File Content</h2>
             <div class="form-group">
-                <label>Content</label>
-                <textarea id="viewFileContent" rows="12"></textarea>
+                <label>Content (editable)</label>
+                <textarea id="viewFileContent" placeholder="Type here to edit file content..."></textarea>
             </div>
             <div class="action-buttons">
                 <button class="btn btn-success" onclick="saveFileContent()">💾 Save Changes</button>
-                <button class="btn btn-secondary" onclick="closeModal('viewFileModal')">Close</button>
+                <button class="btn btn-secondary" onclick="closeModal('viewFileModal')">❌ Close</button>
             </div>
         </div>
     </div>
@@ -558,8 +669,8 @@
                 <input type="text" id="newFileNameInput" placeholder="Enter new name">
             </div>
             <div class="action-buttons">
-                <button class="btn btn-success" onclick="renameFile()">Rename</button>
-                <button class="btn btn-secondary" onclick="closeModal('renameModal')">Cancel</button>
+                <button class="btn btn-success" onclick="renameFile()">✓ Rename</button>
+                <button class="btn btn-secondary" onclick="closeModal('renameModal')">✕ Cancel</button>
             </div>
         </div>
     </div>
@@ -571,8 +682,8 @@
         let currentPath = '/';
         let requestIdCounter = 0;
         let ws = null;
+        let currentEditingFile = '';
 
-        // Navigation
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', () => {
                 document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -644,7 +755,6 @@
                 ws = new WebSocket(`ws://${serverHost}:${serverPort}`);
                 
                 ws.onopen = async () => {
-                    console.log('WebSocket connected');
                     document.getElementById('connectionStatus').textContent = 'Connected';
                     document.getElementById('connectionStatus').classList.remove('disconnected');
                     document.getElementById('connectionStatus').classList.add('connected');
@@ -663,12 +773,10 @@
                 };
                 
                 ws.onerror = (error) => {
-                    console.error('WebSocket error:', error);
                     showMessage('connectionMsg', '✗ Connection error. Make sure proxy server is running on port ' + serverPort, true);
                 };
                 
                 ws.onclose = () => {
-                    console.log('WebSocket disconnected');
                     document.getElementById('connectionStatus').textContent = 'Disconnected';
                     document.getElementById('connectionStatus').classList.remove('connected');
                     document.getElementById('connectionStatus').classList.add('disconnected');
@@ -741,6 +849,14 @@
                 return;
             }
 
+            const formatFileSize = (bytes) => {
+                if (bytes === 0) return '0 B';
+                const k = 1024;
+                const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            };
+
             let html = '<table class="table"><thead><tr><th>Name</th><th>Type</th><th>Size</th><th>Owner</th><th>Actions</th></tr></thead><tbody>';
             
             entries.forEach(entry => {
@@ -748,18 +864,20 @@
                 const icon = isDir ? '📁' : '📄';
                 const badge = isDir ? 'badge-directory' : 'badge-file';
                 const typeText = isDir ? 'Directory' : 'File';
+                const sizeText = isDir ? '-' : formatFileSize(entry.size);
                 
                 html += `<tr>
                     <td>${icon} ${entry.name}</td>
                     <td><span class="badge ${badge}">${typeText}</span></td>
-                    <td>${isDir ? '-' : entry.size + ' bytes'}</td>
+                    <td>${sizeText}</td>
                     <td>${entry.owner}</td>
                     <td class="action-buttons">
                         ${isDir ? 
-                            `<button class="btn btn-primary" onclick="navigateToDir('${entry.name}')">Open</button>
-                             <button class="btn btn-danger" onclick="deleteDirectory('${entry.name}')">Delete</button>` :
-                            `<button class="btn btn-primary" onclick="viewFile('${entry.name}')">View</button>
-                             <button class="btn btn-danger" onclick="deleteFile('${entry.name}')">Delete</button>`
+                            `<button class="btn btn-primary" onclick="navigateToDir('${entry.name}')">📂 Open</button>
+                             <button class="btn btn-danger" onclick="deleteDirectory('${entry.name}')">🗑️ Delete</button>` :
+                            `<button class="btn btn-primary" onclick="viewFile('${entry.name}')">👁️ View/Edit</button>
+                             <button class="btn btn-secondary" onclick="showRenameModal('${entry.name}')">✏️ Rename</button>
+                             <button class="btn btn-danger" onclick="deleteFile('${entry.name}')">🗑️ Delete</button>`
                         }
                     </td>
                 </tr>`;
@@ -807,6 +925,9 @@
 
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
+            if (modalId === 'viewFileModal') {
+                currentEditingFile = '';
+            }
         }
 
         async function createFile() {
@@ -853,17 +974,94 @@
 
         async function viewFile(fileName) {
             const path = currentPath === '/' ? '/' + fileName : currentPath + '/' + fileName;
+            currentEditingFile = path;
             
             try {
                 const result = await sendRequest('file_read', { path: path }, true);
                 
                 if (result.status === 'success') {
-                    document.getElementById('viewFileTitle').textContent = fileName;
-                    document.getElementById('viewFileContent').value = result.data.content || '';
+                    document.getElementById('viewFileTitle').textContent = '✏️ Editing: ' + fileName;
+                    const textarea = document.getElementById('viewFileContent');
+                    textarea.value = result.data.content || '';
+                    textarea.removeAttribute('readonly');
+                    textarea.disabled = false;
                     document.getElementById('viewFileModal').classList.add('active');
+                    
+                    setTimeout(() => textarea.focus(), 100);
                 }
             } catch (error) {
                 console.error('View file error:', error);
+                alert('Failed to open file: ' + error.message);
+            }
+        }
+
+        async function saveFileContent() {
+            if (!currentEditingFile) {
+                alert('No file is being edited');
+                return;
+            }
+
+            const newContent = document.getElementById('viewFileContent').value;
+            
+            try {
+                const deleteResult = await sendRequest('file_delete', { path: currentEditingFile }, true);
+                
+                if (deleteResult.status === 'success' && deleteResult.data.deleted) {
+                    const createResult = await sendRequest('file_create', { 
+                        path: currentEditingFile, 
+                        data: newContent 
+                    }, true);
+                    
+                    if (createResult.status === 'success' && createResult.data.created) {
+                        alert('✓ File saved successfully!');
+                        closeModal('viewFileModal');
+                        refreshFileList();
+                    } else {
+                        alert('✗ Failed to save file: Could not create new version');
+                    }
+                } else {
+                    alert('✗ Failed to save file: Could not delete old version');
+                }
+            } catch (error) {
+                console.error('Save file error:', error);
+                alert('✗ Failed to save file: ' + error.message);
+            }
+        }
+
+        function showRenameModal(fileName) {
+            document.getElementById('currentFileName').value = fileName;
+            document.getElementById('newFileNameInput').value = fileName;
+            document.getElementById('renameModal').classList.add('active');
+        }
+
+        async function renameFile() {
+            const oldName = document.getElementById('currentFileName').value;
+            const newName = document.getElementById('newFileNameInput').value;
+            
+            if (!newName || newName === oldName) {
+                alert('Please enter a different name');
+                return;
+            }
+
+            const oldPath = currentPath === '/' ? '/' + oldName : currentPath + '/' + oldName;
+            const newPath = currentPath === '/' ? '/' + newName : currentPath + '/' + newName;
+            
+            try {
+                const result = await sendRequest('file_rename', { 
+                    old_path: oldPath, 
+                    new_path: newPath 
+                }, true);
+                
+                if (result.status === 'success' && result.data.renamed) {
+                    alert('✓ File renamed successfully!');
+                    closeModal('renameModal');
+                    refreshFileList();
+                } else {
+                    alert('✗ Failed to rename file');
+                }
+            } catch (error) {
+                console.error('Rename file error:', error);
+                alert('✗ Failed to rename file: ' + error.message);
             }
         }
 
@@ -1031,7 +1229,6 @@
             document.getElementById('statsGrid').innerHTML = html;
         }
 
-        // Close modals when clicking outside
         document.querySelectorAll('.modal').forEach(modal => {
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
