@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmniFS - File System Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            background: rgba(255,255,255,0.2);
+        }
+
+        .status-badge.connected {
+            background: #10b981;
+        }
+
+        .status-badge.disconnected {
+            background: #ef4444;
+        }
+
+        .main-content {
+            display: flex;
+            min-height: 600px;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #f8fafc;
+            border-right: 1px solid #e2e8f0;
+            padding: 20px;
+        }
+
+        .nav-item {
+            padding: 14px 18px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .nav-item:hover {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .nav-item.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #1e293b;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #475569;
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 4px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #64748b;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th {
+            background: #f8fafc;
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+            color: #475569;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .table td {
+            padding: 14px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table tr:hover {
+            background: #f8fafc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-admin {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-user {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-file {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-directory {
+            background: #ddd6fe;
+            color: #5b21b6;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .breadcrumb-item {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb-item:hover {
+            color: #667eea;
+        }
+
+        .breadcrumb-separator {
+            color: #cbd5e1;
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📁 OmniFS Manager</h1>
+            <div>
+                <span class="status-badge disconnected" id="connectionStatus">Disconnected</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="nav-item active" data-view="connect">🔌 Connection</div>
+                <div class="nav-item" data-view="login">🔐 Login</div>
+                <div class="nav-item" data-view="files">📂 Files</div>
+                <div class="nav-item" data-view="users">👥 Users</div>
+                <div class="nav-item" data-view="stats">📊 Statistics</div>
+            </div>
+
+            <div class="content-area">
+                <!-- Connection View -->
+                <div class="view active" id="connect">
+                    <div class="card">
+                        <h2>Server Connection</h2>
+                        <div class="form-group">
+                            <label>WebSocket Proxy Address</label>
+                            <input type="text" id="serverHost" value="localhost" placeholder="localhost">
+                            <small>The proxy server address (usually localhost)</small>
+                        </div>
+                        <div class="form-group">
+                            <label>WebSocket Proxy Port</label>
+                            <input type="number" id="serverPort" value="8081">
+                            <small>Proxy listens on 8081, forwards to C++ server on 8080</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Config Path</label>
+                            <input type="text" id="configPath" value="omnifs.conf">
+                        </div>
+                        <div class="form-group">
+                            <label>Omni Path</label>
+                            <input type="text" id="omniPath" value="omnifs.dat">
+                        </div>
+                        <button class="btn btn-primary" onclick="initializeFS()">
+                            Initialize & Connect
+                        </button>
+                    </div>
+                    <div id="connectionMsg"></div>
+                </div>
+
+                <!-- Login View -->
+                <div class="view" id="login">
+                    <div class="card">
+                        <h2>User Login</h2>
+                        <div class="form-group">
+                            <label>User Index</label>
+                            <input type="number" id="loginUserIndex" value="0" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="loginPassword">
+                        </div>
+                        <button class="btn btn-primary" onclick="login()">Login</button>
+                        <button class="btn btn-secondary" onclick="logout()" style="margin-left: 10px;">Logout</button>
+                    </div>
+                    <div id="loginMsg"></div>
+                </div>
+
+                <!-- Files View -->
+                <div class="view" id="files">
+                    <div class="card">
+                        <h2>File Browser</h2>
+                        <div class="breadcrumb" id="breadcrumb"></div>
+                        <div class="action-buttons" style="margin-bottom: 20px;">
+                            <button class="btn btn-primary" onclick="showCreateFileModal()">➕ New File</button>
+                            <button class="btn btn-primary" onclick="showCreateDirModal()">📁 New Directory</button>
+                            <button class="btn btn-secondary" onclick="refreshFileList()">🔄 Refresh</button>
+                        </div>
+                        <div id="fileList"></div>
+                    </div>
+                </div>
+
+                <!-- Users View -->
+                <div class="view" id="users">
+                    <div class="card">
+                        <h2>User Management</h2>
+                        <button class="btn btn-primary" onclick="showCreateUserModal()" style="margin-bottom: 20px;">➕ Create User</button>
+                        <button class="btn btn-secondary" onclick="refreshUserList()" style="margin-left: 10px;">🔄 Refresh</button>
+                        <div id="userList"></div>
+                    </div>
+                </div>
+
+                <!-- Stats View -->
+                <div class="view" id="stats">
+                    <div class="card">
+                        <h2>System Statistics</h2>
+                        <button class="btn btn-secondary" onclick="refreshStats()">🔄 Refresh</button>
+                        <div class="stats-grid" id="statsGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="createFileModal">
+        <div class="modal-content">
+            <h2>Create New File</h2>
+            <div class="form-group">
+                <label>File Name</label>
+                <input type="text" id="newFileName" placeholder="example.txt">
+            </div>
+            <div class="form-group">
+                <label>Content</label>
+                <textarea id="newFileContent" rows="6" placeholder="File content..."></textarea>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="createFile()">Create</button>
+                <button class="btn btn-secondary" onclick="closeModal('createFileModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="createDirModal">
+        <div class="modal-content">
+            <h2>Create New Directory</h2>
+            <div class="form-group">
+                <label>Directory Name</label>
+                <input type="text" id="newDirName" placeholder="new_folder">
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="createDirectory()">Create</button>
+                <button class="btn btn-secondary" onclick="closeModal('createDirModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="createUserModal">
+        <div class="modal-content">
+            <h2>Create New User</h2>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="newUsername">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="newUserPassword">
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select id="newUserRole">
+                    <option value="1">User (1)</option>
+                    <option value="0">Admin (0)</option>
+                </select>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="createUser()">Create</button>
+                <button class="btn btn-secondary" onclick="closeModal('createUserModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="viewFileModal">
+        <div class="modal-content">
+            <h2 id="viewFileTitle">File Content</h2>
+            <div class="form-group">
+                <label>Content</label>
+                <textarea id="viewFileContent" rows="12"></textarea>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="saveFileContent()">💾 Save Changes</button>
+                <button class="btn btn-secondary" onclick="closeModal('viewFileModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename File Modal -->
+    <div class="modal" id="renameModal">
+        <div class="modal-content">
+            <h2>Rename File</h2>
+            <div class="form-group">
+                <label>Current Name</label>
+                <input type="text" id="currentFileName" readonly>
+            </div>
+            <div class="form-group">
+                <label>New Name</label>
+                <input type="text" id="newFileNameInput" placeholder="Enter new name">
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="renameFile()">Rename</button>
+                <button class="btn btn-secondary" onclick="closeModal('renameModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let serverHost = 'localhost';
+        let serverPort = 8081;
+        let sessionId = '';
+        let currentPath = '/';
+        let requestIdCounter = 0;
+        let ws = null;
+
+        // Navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                item.classList.add('active');
+                document.getElementById(item.dataset.view).classList.add('active');
+            });
+        });
+
+        function generateRequestId() {
+            return `req_${Date.now()}_${requestIdCounter++}`;
+        }
+
+        async function sendRequest(operation, parameters = {}, needsSession = false) {
+            const request = {
+                operation: operation,
+                request_id: generateRequestId(),
+                parameters: parameters
+            };
+
+            if (needsSession && sessionId) {
+                request.session_id = sessionId;
+            }
+
+            return new Promise((resolve, reject) => {
+                if (!ws || ws.readyState !== WebSocket.OPEN) {
+                    reject(new Error('WebSocket not connected. Please initialize first.'));
+                    return;
+                }
+
+                const requestId = request.request_id;
+                
+                const messageHandler = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        if (data.request_id === requestId) {
+                            ws.removeEventListener('message', messageHandler);
+                            resolve(data);
+                        }
+                    } catch (error) {
+                        ws.removeEventListener('message', messageHandler);
+                        reject(error);
+                    }
+                };
+
+                ws.addEventListener('message', messageHandler);
+                ws.send(JSON.stringify(request));
+                
+                setTimeout(() => {
+                    ws.removeEventListener('message', messageHandler);
+                    reject(new Error('Request timeout'));
+                }, 10000);
+            });
+        }
+
+        function showMessage(elementId, message, isError = false) {
+            const el = document.getElementById(elementId);
+            el.innerHTML = `<div class="alert ${isError ? 'alert-error' : 'alert-success'}">${message}</div>`;
+            setTimeout(() => el.innerHTML = '', 5000);
+        }
+
+        async function initializeFS() {
+            serverHost = document.getElementById('serverHost').value;
+            serverPort = parseInt(document.getElementById('serverPort').value);
+            const configPath = document.getElementById('configPath').value;
+            const omniPath = document.getElementById('omniPath').value;
+
+            try {
+                ws = new WebSocket(`ws://${serverHost}:${serverPort}`);
+                
+                ws.onopen = async () => {
+                    console.log('WebSocket connected');
+                    document.getElementById('connectionStatus').textContent = 'Connected';
+                    document.getElementById('connectionStatus').classList.remove('disconnected');
+                    document.getElementById('connectionStatus').classList.add('connected');
+                    
+                    try {
+                        const result = await sendRequest('init', { config_path: configPath, omni_path: omniPath });
+                        
+                        if (result.status === 'success' && result.data.initialized) {
+                            showMessage('connectionMsg', '✓ File system initialized successfully!');
+                        } else {
+                            showMessage('connectionMsg', '✗ Initialization failed: ' + (result.error_message || 'Unknown error'), true);
+                        }
+                    } catch (error) {
+                        showMessage('connectionMsg', '✗ Initialization request failed: ' + error.message, true);
+                    }
+                };
+                
+                ws.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                    showMessage('connectionMsg', '✗ Connection error. Make sure proxy server is running on port ' + serverPort, true);
+                };
+                
+                ws.onclose = () => {
+                    console.log('WebSocket disconnected');
+                    document.getElementById('connectionStatus').textContent = 'Disconnected';
+                    document.getElementById('connectionStatus').classList.remove('connected');
+                    document.getElementById('connectionStatus').classList.add('disconnected');
+                };
+                
+            } catch (error) {
+                showMessage('connectionMsg', '✗ Failed to connect: ' + error.message, true);
+            }
+        }
+
+        async function login() {
+            const userIndex = parseInt(document.getElementById('loginUserIndex').value);
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const result = await sendRequest('login', { user_index: userIndex, password: password });
+                
+                if (result.status === 'success' && result.data.session_id) {
+                    sessionId = result.data.session_id;
+                    showMessage('loginMsg', `✓ Logged in successfully!`);
+                    refreshFileList();
+                } else {
+                    showMessage('loginMsg', '✗ Login failed: ' + (result.error_message || 'Invalid credentials'), true);
+                }
+            } catch (error) {
+                showMessage('loginMsg', '✗ Login error: ' + error.message, true);
+            }
+        }
+
+        async function logout() {
+            if (!sessionId) {
+                showMessage('loginMsg', '✗ No active session', true);
+                return;
+            }
+
+            try {
+                const result = await sendRequest('logout', {}, true);
+                
+                if (result.status === 'success' && result.data.logged_out) {
+                    sessionId = '';
+                    showMessage('loginMsg', '✓ Logged out successfully!');
+                } else {
+                    showMessage('loginMsg', '✗ Logout failed', true);
+                }
+            } catch (error) {
+                showMessage('loginMsg', '✗ Logout error: ' + error.message, true);
+            }
+        }
+
+        async function refreshFileList() {
+            if (!sessionId) return;
+
+            try {
+                const result = await sendRequest('dir_list', { path: currentPath }, true);
+                
+                if (result.status === 'success' && result.data.entries) {
+                    displayFileList(result.data.entries);
+                    updateBreadcrumb();
+                } else {
+                    document.getElementById('fileList').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📂</div><p>Failed to load directory</p></div>';
+                }
+            } catch (error) {
+                console.error('File list error:', error);
+            }
+        }
+
+        function displayFileList(entries) {
+            if (entries.length === 0) {
+                document.getElementById('fileList').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📂</div><p>This directory is empty</p></div>';
+                return;
+            }
+
+            let html = '<table class="table"><thead><tr><th>Name</th><th>Type</th><th>Size</th><th>Owner</th><th>Actions</th></tr></thead><tbody>';
+            
+            entries.forEach(entry => {
+                const isDir = entry.type === 1;
+                const icon = isDir ? '📁' : '📄';
+                const badge = isDir ? 'badge-directory' : 'badge-file';
+                const typeText = isDir ? 'Directory' : 'File';
+                
+                html += `<tr>
+                    <td>${icon} ${entry.name}</td>
+                    <td><span class="badge ${badge}">${typeText}</span></td>
+                    <td>${isDir ? '-' : entry.size + ' bytes'}</td>
+                    <td>${entry.owner}</td>
+                    <td class="action-buttons">
+                        ${isDir ? 
+                            `<button class="btn btn-primary" onclick="navigateToDir('${entry.name}')">Open</button>
+                             <button class="btn btn-danger" onclick="deleteDirectory('${entry.name}')">Delete</button>` :
+                            `<button class="btn btn-primary" onclick="viewFile('${entry.name}')">View</button>
+                             <button class="btn btn-danger" onclick="deleteFile('${entry.name}')">Delete</button>`
+                        }
+                    </td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            document.getElementById('fileList').innerHTML = html;
+        }
+
+        function updateBreadcrumb() {
+            const parts = currentPath.split('/').filter(p => p);
+            let html = '<span class="breadcrumb-item" onclick="navigateToPath(\'/\')">🏠 Root</span>';
+            let path = '';
+            
+            parts.forEach(part => {
+                path += '/' + part;
+                const currentFullPath = path;
+                html += ` <span class="breadcrumb-separator">/</span> <span class="breadcrumb-item" onclick="navigateToPath('${currentFullPath}')">${part}</span>`;
+            });
+            
+            document.getElementById('breadcrumb').innerHTML = html;
+        }
+
+        function navigateToPath(path) {
+            currentPath = path;
+            refreshFileList();
+        }
+
+        function navigateToDir(dirName) {
+            currentPath = currentPath === '/' ? '/' + dirName : currentPath + '/' + dirName;
+            refreshFileList();
+        }
+
+        function showCreateFileModal() {
+            document.getElementById('createFileModal').classList.add('active');
+        }
+
+        function showCreateDirModal() {
+            document.getElementById('createDirModal').classList.add('active');
+        }
+
+        function showCreateUserModal() {
+            document.getElementById('createUserModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        async function createFile() {
+            const fileName = document.getElementById('newFileName').value;
+            const content = document.getElementById('newFileContent').value;
+            
+            if (!fileName) return;
+
+            const path = currentPath === '/' ? '/' + fileName : currentPath + '/' + fileName;
+            
+            try {
+                const result = await sendRequest('file_create', { path: path, data: content }, true);
+                
+                if (result.status === 'success' && result.data.created) {
+                    closeModal('createFileModal');
+                    document.getElementById('newFileName').value = '';
+                    document.getElementById('newFileContent').value = '';
+                    refreshFileList();
+                }
+            } catch (error) {
+                console.error('Create file error:', error);
+            }
+        }
+
+        async function createDirectory() {
+            const dirName = document.getElementById('newDirName').value;
+            
+            if (!dirName) return;
+
+            const path = currentPath === '/' ? '/' + dirName : currentPath + '/' + dirName;
+            
+            try {
+                const result = await sendRequest('dir_create', { path: path }, true);
+                
+                if (result.status === 'success' && result.data.created) {
+                    closeModal('createDirModal');
+                    document.getElementById('newDirName').value = '';
+                    refreshFileList();
+                }
+            } catch (error) {
+                console.error('Create directory error:', error);
+            }
+        }
+
+        async function viewFile(fileName) {
+            const path = currentPath === '/' ? '/' + fileName : currentPath + '/' + fileName;
+            
+            try {
+                const result = await sendRequest('file_read', { path: path }, true);
+                
+                if (result.status === 'success') {
+                    document.getElementById('viewFileTitle').textContent = fileName;
+                    document.getElementById('viewFileContent').value = result.data.content || '';
+                    document.getElementById('viewFileModal').classList.add('active');
+                }
+            } catch (error) {
+                console.error('View file error:', error);
+            }
+        }
+
+        async function deleteFile(fileName) {
+            if (!confirm(`Delete file "${fileName}"?`)) return;
+
+            const path = currentPath === '/' ? '/' + fileName : currentPath + '/' + fileName;
+            
+            try {
+                const result = await sendRequest('file_delete', { path: path }, true);
+                
+                if (result.status === 'success' && result.data.deleted) {
+                    refreshFileList();
+                }
+            } catch (error) {
+                console.error('Delete file error:', error);
+            }
+        }
+
+        async function deleteDirectory(dirName) {
+            if (!confirm(`Delete directory "${dirName}" and all its contents?`)) return;
+
+            const path = currentPath === '/' ? '/' + dirName : currentPath + '/' + dirName;
+            
+            try {
+                const result = await sendRequest('dir_delete', { path: path }, true);
+                
+                if (result.status === 'success' && result.data.deleted) {
+                    refreshFileList();
+                }
+            } catch (error) {
+                console.error('Delete directory error:', error);
+            }
+        }
+
+        async function refreshUserList() {
+            if (!sessionId) return;
+
+            try {
+                const result = await sendRequest('user_list', {}, true);
+                
+                if (result.status === 'success' && result.data.users) {
+                    displayUserList(result.data.users);
+                }
+            } catch (error) {
+                console.error('User list error:', error);
+            }
+        }
+
+        function displayUserList(users) {
+            if (users.length === 0) {
+                document.getElementById('userList').innerHTML = '<div class="empty-state"><div class="empty-state-icon">👥</div><p>No users found</p></div>';
+                return;
+            }
+
+            let html = '<table class="table"><thead><tr><th>Username</th><th>User Index</th><th>Role</th><th>Actions</th></tr></thead><tbody>';
+            
+            users.forEach(user => {
+                const roleText = user.role === 0 ? 'Admin' : 'User';
+                const roleBadge = user.role === 0 ? 'badge-admin' : 'badge-user';
+                
+                html += `<tr>
+                    <td>${user.username}</td>
+                    <td>${user.user_index}</td>
+                    <td><span class="badge ${roleBadge}">${roleText}</span></td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteUser(${user.user_index}, '${user.username}')">Delete</button>
+                    </td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            document.getElementById('userList').innerHTML = html;
+        }
+
+        async function createUser() {
+            const username = document.getElementById('newUsername').value;
+            const password = document.getElementById('newUserPassword').value;
+            const role = parseInt(document.getElementById('newUserRole').value);
+            
+            if (!username || !password) return;
+
+            try {
+                const result = await sendRequest('user_create', { username: username, password: password, role: role }, true);
+                
+                if (result.status === 'success' && result.data.user_index !== undefined) {
+                    closeModal('createUserModal');
+                    document.getElementById('newUsername').value = '';
+                    document.getElementById('newUserPassword').value = '';
+                    refreshUserList();
+                }
+            } catch (error) {
+                console.error('Create user error:', error);
+            }
+        }
+
+        async function deleteUser(userIndex, username) {
+            if (!confirm(`Delete user "${username}"?`)) return;
+
+            try {
+                const result = await sendRequest('user_delete', { user_index: userIndex }, true);
+                
+                if (result.status === 'success' && result.data.deleted) {
+                    refreshUserList();
+                }
+            } catch (error) {
+                console.error('Delete user error:', error);
+            }
+        }
+
+        async function refreshStats() {
+            if (!sessionId) return;
+
+            try {
+                const result = await sendRequest('get_stats', {}, true);
+                
+                if (result.status === 'success' && result.data) {
+                    displayStats(result.data);
+                }
+            } catch (error) {
+                console.error('Stats error:', error);
+            }
+        }
+
+        function displayStats(stats) {
+            const formatBytes = (bytes) => {
+                if (bytes === 0) return '0 B';
+                const k = 1024;
+                const sizes = ['B', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            };
+
+            const html = `
+                <div class="stat-card">
+                    <div class="stat-value">${formatBytes(stats.total_size)}</div>
+                    <div class="stat-label">Total Size</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${formatBytes(stats.used_space)}</div>
+                    <div class="stat-label">Used Space</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${formatBytes(stats.free_space)}</div>
+                    <div class="stat-label">Free Space</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.total_files}</div>
+                    <div class="stat-label">Total Files</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.total_directories}</div>
+                    <div class="stat-label">Directories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.total_users}</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.active_sessions}</div>
+                    <div class="stat-label">Active Sessions</div>
+                </div>
+            `;
+            
+            document.getElementById('statsGrid').innerHTML = html;
+        }
+
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+
+        console.log('OmniFS Web Interface loaded and ready!');
+    </script>
+</body>
+</html>

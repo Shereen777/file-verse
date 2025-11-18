@@ -1,0 +1,16 @@
+{
+  "name": "omnifs-proxy",
+  "version": "1.0.0",
+  "description": "WebSocket to TCP proxy for OmniFS file system server",
+  "main": "proxy-server.js",
+  "scripts": {
+    "start": "node proxy-server.js",
+    "test": "echo \"Start the proxy with: npm start\""
+  },
+  "keywords": ["websocket", "tcp", "proxy", "filesystem"],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.14.2"
+  }
+}
