@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <cstring>
+#include <vector>
 
 using namespace std;
 
@@ -185,6 +186,14 @@ private:
         collect_active_users_helper(node->right, arr, index);
     }
     
+    void inorder_collect_helper(AVLNode* node, vector<UserInfo*>& users) {
+        if (!node) return;
+        
+        inorder_collect_helper(node->left, users);
+        users.push_back(&node->user);
+        inorder_collect_helper(node->right, users);
+    }
+    
     void delete_tree(AVLNode* node) {
         if (!node) return;
         delete_tree(node->left);
@@ -208,6 +217,19 @@ public:
         return node ? &(node->user) : nullptr;
     }
     
+    UserInfo* find_by_username(const string& username) {
+        // Simple linear search
+        vector<UserInfo*> all_users;
+        inorder_collect(all_users);
+        
+        for (UserInfo* user : all_users) {
+            if (user->is_active && strcmp(user->username, username.c_str()) == 0) {
+                return user;
+            }
+        }
+        return nullptr;
+    }
+    
     bool user_exists(const uint32_t& ind) {
         return find_by_index(ind) != nullptr;
     }
@@ -227,6 +249,16 @@ public:
     void get_all_active(UserInfo* arr, int& count) {
         count = 0;
         collect_active_users_helper(root, arr, count);
+    }
+    
+    // Fixed: No parameters for inorder_collect
+    void inorder_collect(vector<UserInfo*>& users) {
+        users.clear();
+        inorder_collect_helper(root, users);
+    }
+    
+    AVLNode* getRoot() {
+        return root;
     }
 };
 

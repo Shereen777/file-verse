@@ -559,7 +559,6 @@ public:
         return node;
     }
     
-    // NEW: Create node with user context
     FSNode* create_node_for_user(const string& path, EntryType type, const string& owner, bool is_admin) {
         string resolved_path = resolve_user_path(path, owner, is_admin);
         return create_node(resolved_path, type, owner);

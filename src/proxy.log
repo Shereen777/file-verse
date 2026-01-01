@@ -1,0 +1,65 @@
+========================================
+OmniFS WebSocket Proxy Server
+========================================
+WebSocket: ws://localhost:8081
+TCP Target: 127.0.0.1:8080
+========================================
+
+✓ Proxy server is running...
+✓ Waiting for browser connections...
+
+Press Ctrl+C to stop
+
+[2026-01-01T05:47:28.710Z] Browser connected from ::1
+
+[WS→TCP] Received from browser (123 bytes)
+Request: {"operation":"init","request_id":"req_1767246448711_0","parameters":{"config_path":"omnifs.conf","om...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (102 bytes)
+Response: {"status":"success","operation":"init","request_id":"req_1767246448711_0","data":{"initialized":true...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (112 bytes)
+Request: {"operation":"login","request_id":"req_1767246451650_1","parameters":{"username":"admin","password":...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (143 bytes)
+Response: {"status":"success","operation":"login","request_id":"req_1767246451650_1","data":{"session_id":"SES...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (125 bytes)
+Request: {"operation":"dir_list","request_id":"req_1767246451656_2","parameters":{"path":"/"},"session_id":"S...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (100 bytes)
+Response: {"status":"success","operation":"dir_list","request_id":"req_1767246451656_2","data":{"entries":[]}}
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (116 bytes)
+Request: {"operation":"user_list","request_id":"req_1767246456805_3","parameters":{},"session_id":"SESSION_17...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (143 bytes)
+Response: {"status":"success","operation":"user_list","request_id":"req_1767246456805_3","data":{"users":[{"us...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (116 bytes)
+Request: {"operation":"user_list","request_id":"req_1767246457800_4","parameters":{},"session_id":"SESSION_17...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (143 bytes)
+Response: {"status":"success","operation":"user_list","request_id":"req_1767246457800_4","data":{"users":[{"us...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+[2026-01-01T05:47:47.307Z] Browser disconnected
+

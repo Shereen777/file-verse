@@ -14,7 +14,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Check if C++ server exists
-if [ ! -f "./server" ]; then
+if [ ! -f "./main" ]; then
     echo -e "${RED}✗ C++ server not found!${NC}"
     echo "Please compile first: g++ -o server server.cpp file_system.cpp -lpthread"
     exit 1
@@ -43,7 +43,7 @@ echo ""
 
 # Start C++ server in background
 echo -e "${GREEN}Starting C++ Server (port 8080)...${NC}"
-./server 8080 > server.log 2>&1 &
+./main 8080 > server.log 2>&1 &
 SERVER_PID=$!
 sleep 1
 

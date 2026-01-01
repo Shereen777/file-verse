@@ -34,6 +34,17 @@ struct UserSystem {
     UserInfo* find_user_by_index(uint32_t index) {
         return tree.find_by_index(index);
     }
+    UserInfo* find_user_by_username(const std::string& username) {
+        std::vector<UserInfo*> users;
+        tree.inorder_collect(users);
+        
+        for (UserInfo* user : users) {
+            if (user->is_active && strcmp(user->username, username.c_str()) == 0) {
+                return user;
+            }
+        }
+        return nullptr;
+    }
     
     bool remove(uint32_t user_index) {
         UserInfo* user = tree.find_by_index(user_index);
@@ -42,7 +53,6 @@ struct UserSystem {
             return false;
         }
         
-        // Mark as inactive instead of removing from tree
         user->is_active = 0;
         cout << "✓ User removed: " << user->username << " (Index: " << user_index << ")\n";
         
@@ -51,6 +61,20 @@ struct UserSystem {
     
     int get_user_count() {
         return tree.count_active();
+    }
+
+    void get_all_users_vector(std::vector<UserInfo>& users) {
+        UserInfo* user_array = nullptr;
+        int count = 0;
+        get_all_users(&user_array, &count);
+        
+        users.clear();
+        if (user_array && count > 0) {
+            for (int i = 0; i < count; i++) {
+                users.push_back(user_array[i]);
+            }
+            free(user_array);  // Don't forget to free the memory
+        }
     }
     
     void get_all_users(UserInfo** users, int* count) {
