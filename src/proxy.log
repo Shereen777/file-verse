@@ -10,56 +10,266 @@ TCP Target: 127.0.0.1:8080
 
 Press Ctrl+C to stop
 
-[2026-01-01T05:47:28.710Z] Browser connected from ::1
+[2026-01-01T10:58:44.441Z] Browser connected from ::1
 
 [WS→TCP] Received from browser (123 bytes)
-Request: {"operation":"init","request_id":"req_1767246448711_0","parameters":{"config_path":"omnifs.conf","om...
+Request: {"operation":"init","request_id":"req_1767265124441_0","parameters":{"config_path":"omnifs.conf","om...
 [TCP] Connected to C++ server at 127.0.0.1:8080
 [TCP→C++] Sent request to C++ server
 [C++→TCP] Received from C++ server (102 bytes)
-Response: {"status":"success","operation":"init","request_id":"req_1767246448711_0","data":{"initialized":true...
+Response: {"status":"success","operation":"init","request_id":"req_1767265124441_0","data":{"initialized":true...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (108 bytes)
+Request: {"operation":"login","request_id":"req_1767265138285_1","parameters":{"user_index":0,"password":"adm...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (135 bytes)
+Response: {"status":"success","operation":"login","request_id":"req_1767265138285_1","data":{"session_id":"SES...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (121 bytes)
+Request: {"operation":"dir_list","request_id":"req_1767265138289_2","parameters":{"path":"/"},"session_id":"S...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (100 bytes)
+Response: {"status":"success","operation":"dir_list","request_id":"req_1767265138289_2","data":{"entries":[]}}
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (161 bytes)
+Request: {"operation":"user_create","request_id":"req_1767265153121_3","parameters":{"username":"shereen","pa...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (131 bytes)
+Response: {"status":"success","operation":"user_create","request_id":"req_1767265153121_3","data":{"user_index...
 [TCP→WS] Forwarded response to browser
 [TCP] Connection to C++ server closed
 
 
 [WS→TCP] Received from browser (112 bytes)
-Request: {"operation":"login","request_id":"req_1767246451650_1","parameters":{"username":"admin","password":...
+Request: {"operation":"user_list","request_id":"req_1767265153127_4","parameters":{},"session_id":"SESSION_17...
 [TCP] Connected to C++ server at 127.0.0.1:8080
 [TCP→C++] Sent request to C++ server
-[C++→TCP] Received from C++ server (143 bytes)
-Response: {"status":"success","operation":"login","request_id":"req_1767246451650_1","data":{"session_id":"SES...
+[C++→TCP] Received from C++ server (195 bytes)
+Response: {"status":"success","operation":"user_list","request_id":"req_1767265153127_4","data":{"users":[{"us...
 [TCP→WS] Forwarded response to browser
 [TCP] Connection to C++ server closed
 
 
-[WS→TCP] Received from browser (125 bytes)
-Request: {"operation":"dir_list","request_id":"req_1767246451656_2","parameters":{"path":"/"},"session_id":"S...
+[WS→TCP] Received from browser (109 bytes)
+Request: {"operation":"login","request_id":"req_1767265176424_5","parameters":{"user_index":833251,"password"...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (145 bytes)
+Response: {"status":"success","operation":"login","request_id":"req_1767265176424_5","data":{"session_id":"SES...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (126 bytes)
+Request: {"operation":"dir_list","request_id":"req_1767265176440_6","parameters":{"path":"/"},"session_id":"S...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (151 bytes)
+Response: {"status":"success","operation":"dir_list","request_id":"req_1767265176440_6","data":{"entries":[{"n...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (131 bytes)
+Request: {"operation":"dir_list","request_id":"req_1767265182836_7","parameters":{"path":"/users"},"session_i...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (154 bytes)
+Response: {"status":"success","operation":"dir_list","request_id":"req_1767265182836_7","data":{"entries":[{"n...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (139 bytes)
+Request: {"operation":"dir_list","request_id":"req_1767265188232_8","parameters":{"path":"/users/shereen"},"s...
 [TCP] Connected to C++ server at 127.0.0.1:8080
 [TCP→C++] Sent request to C++ server
 [C++→TCP] Received from C++ server (100 bytes)
-Response: {"status":"success","operation":"dir_list","request_id":"req_1767246451656_2","data":{"entries":[]}}
+Response: {"status":"success","operation":"dir_list","request_id":"req_1767265188232_8","data":{"entries":[]}}
 [TCP→WS] Forwarded response to browser
 [TCP] Connection to C++ server closed
 
 
-[WS→TCP] Received from browser (116 bytes)
-Request: {"operation":"user_list","request_id":"req_1767246456805_3","parameters":{},"session_id":"SESSION_17...
+[WS→TCP] Received from browser (131 bytes)
+Request: {"operation":"dir_list","request_id":"req_1767265190753_9","parameters":{"path":"/users"},"session_i...
 [TCP] Connected to C++ server at 127.0.0.1:8080
 [TCP→C++] Sent request to C++ server
-[C++→TCP] Received from C++ server (143 bytes)
-Response: {"status":"success","operation":"user_list","request_id":"req_1767246456805_3","data":{"users":[{"us...
+[C++→TCP] Received from C++ server (154 bytes)
+Response: {"status":"success","operation":"dir_list","request_id":"req_1767265190753_9","data":{"entries":[{"n...
 [TCP→WS] Forwarded response to browser
 [TCP] Connection to C++ server closed
 
 
-[WS→TCP] Received from browser (116 bytes)
-Request: {"operation":"user_list","request_id":"req_1767246457800_4","parameters":{},"session_id":"SESSION_17...
+[WS→TCP] Received from browser (127 bytes)
+Request: {"operation":"dir_list","request_id":"req_1767265192538_10","parameters":{"path":"/"},"session_id":"...
 [TCP] Connected to C++ server at 127.0.0.1:8080
 [TCP→C++] Sent request to C++ server
-[C++→TCP] Received from C++ server (143 bytes)
-Response: {"status":"success","operation":"user_list","request_id":"req_1767246457800_4","data":{"users":[{"us...
+[C++→TCP] Received from C++ server (152 bytes)
+Response: {"status":"success","operation":"dir_list","request_id":"req_1767265192538_10","data":{"entries":[{"...
 [TCP→WS] Forwarded response to browser
 [TCP] Connection to C++ server closed
 
-[2026-01-01T05:47:47.307Z] Browser disconnected
+
+[WS→TCP] Received from browser (132 bytes)
+Request: {"operation":"dir_list","request_id":"req_1767265199838_11","parameters":{"path":"/users"},"session_...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (155 bytes)
+Response: {"status":"success","operation":"dir_list","request_id":"req_1767265199838_11","data":{"entries":[{"...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (140 bytes)
+Request: {"operation":"dir_list","request_id":"req_1767265211384_12","parameters":{"path":"/users/shereen"},"...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (101 bytes)
+Response: {"status":"success","operation":"dir_list","request_id":"req_1767265211384_12","data":{"entries":[]}...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (140 bytes)
+Request: {"operation":"dir_list","request_id":"req_1767265213621_13","parameters":{"path":"/users/shereen"},"...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (101 bytes)
+Response: {"status":"success","operation":"dir_list","request_id":"req_1767265213621_13","data":{"entries":[]}...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (132 bytes)
+Request: {"operation":"dir_list","request_id":"req_1767265215364_14","parameters":{"path":"/users"},"session_...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (155 bytes)
+Response: {"status":"success","operation":"dir_list","request_id":"req_1767265215364_14","data":{"entries":[{"...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (127 bytes)
+Request: {"operation":"dir_list","request_id":"req_1767265216997_15","parameters":{"path":"/"},"session_id":"...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (152 bytes)
+Response: {"status":"success","operation":"dir_list","request_id":"req_1767265216997_15","data":{"entries":[{"...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (111 bytes)
+Request: {"operation":"login","request_id":"req_1767265222526_16","parameters":{"user_index":833251,"password...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (126 bytes)
+Response: {"status":"error","operation":"login","request_id":"req_1767265222526_16","error_code":-2,"error_mes...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (110 bytes)
+Request: {"operation":"login","request_id":"req_1767265226723_17","parameters":{"user_index":833251,"password...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (146 bytes)
+Response: {"status":"success","operation":"login","request_id":"req_1767265226723_17","data":{"session_id":"SE...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (127 bytes)
+Request: {"operation":"dir_list","request_id":"req_1767265226730_18","parameters":{"path":"/"},"session_id":"...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (152 bytes)
+Response: {"status":"success","operation":"dir_list","request_id":"req_1767265226730_18","data":{"entries":[{"...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (115 bytes)
+Request: {"operation":"logout","request_id":"req_1767265233845_19","parameters":{},"session_id":"SESSION_1767...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (104 bytes)
+Response: {"status":"success","operation":"logout","request_id":"req_1767265233845_19","data":{"logged_out":tr...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (110 bytes)
+Request: {"operation":"login","request_id":"req_1767265236463_20","parameters":{"user_index":833251,"password...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (146 bytes)
+Response: {"status":"success","operation":"login","request_id":"req_1767265236463_20","data":{"session_id":"SE...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (127 bytes)
+Request: {"operation":"dir_list","request_id":"req_1767265236467_21","parameters":{"path":"/"},"session_id":"...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (152 bytes)
+Response: {"status":"success","operation":"dir_list","request_id":"req_1767265236467_21","data":{"entries":[{"...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (132 bytes)
+Request: {"operation":"dir_list","request_id":"req_1767265246569_22","parameters":{"path":"/users"},"session_...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (155 bytes)
+Response: {"status":"success","operation":"dir_list","request_id":"req_1767265246569_22","data":{"entries":[{"...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (140 bytes)
+Request: {"operation":"dir_list","request_id":"req_1767265248486_23","parameters":{"path":"/users/shereen"},"...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (101 bytes)
+Response: {"status":"success","operation":"dir_list","request_id":"req_1767265248486_23","data":{"entries":[]}...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (132 bytes)
+Request: {"operation":"dir_list","request_id":"req_1767265251404_24","parameters":{"path":"/users"},"session_...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (155 bytes)
+Response: {"status":"success","operation":"dir_list","request_id":"req_1767265251404_24","data":{"entries":[{"...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+
+[WS→TCP] Received from browser (118 bytes)
+Request: {"operation":"get_stats","request_id":"req_1767265261848_25","parameters":{},"session_id":"SESSION_1...
+[TCP] Connected to C++ server at 127.0.0.1:8080
+[TCP→C++] Sent request to C++ server
+[C++→TCP] Received from C++ server (220 bytes)
+Response: {"status":"success","operation":"get_stats","request_id":"req_1767265261848_25","data":{"total_size"...
+[TCP→WS] Forwarded response to browser
+[TCP] Connection to C++ server closed
+
+[2026-01-01T11:01:09.475Z] Browser disconnected
 

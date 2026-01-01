@@ -63,10 +63,11 @@ struct OMNIHeader {
     uint32_t file_state_storage_offset;
     uint32_t change_log_offset;
     
+    // ⚠️ ADDED: Admin credentials and index
     char admin_username[32];
     char admin_password[64];
     uint8_t require_auth;
-    uint32_t admin_index;
+    uint32_t admin_index;  // Admin's random index
     
     uint8_t reserved[291];  // Adjusted to maintain 512 bytes total
 
@@ -94,7 +95,7 @@ struct UserInfo {
     uint64_t created_time;
     uint64_t last_login;
     uint8_t is_active;
-    uint8_t reserved[19];
+    uint8_t reserved[19];       // Adjusted to maintain 128 bytes total
 
     UserInfo() = default;
     
@@ -106,7 +107,7 @@ struct UserInfo {
         password_hash[sizeof(password_hash) - 1] = '\0';
         memset(reserved, 0, sizeof(reserved));
     }
-};//128 bytes
+};
 
 struct FileEntry {
     char name[256];
@@ -192,4 +193,4 @@ struct FSStats {
     }
 };
 
-#endif
+#endif // ODF_TYPES_HPP

@@ -100,23 +100,21 @@ string handle_init(const string& params) {
     return "{\"initialized\":false}";
 }
 
-// In the server code, update the handle_login function:
 string handle_login(const string& params, string& session_id) {
-    string username = get_json_value(params, "username");  // Changed from user_index
+    uint32_t user_index = get_json_int(params, "user_index");
     string password = get_json_value(params, "password");
     
     void* session = nullptr;
-    // Update the call to use the new signature
-    int result = user_login(&session, fs_instance, username.c_str(), password.c_str());
+    int result = user_login(&session, fs_instance, user_index, password.c_str());
     
     if (result == static_cast<int>(OFSErrorCodes::SUCCESS)) {
-        session_id = "SESSION_" + to_string(time(nullptr)) + "_" + username;
+        session_id = "SESSION_" + to_string(time(nullptr)) + "_" + to_string(user_index);
         
         pthread_mutex_lock(&sessions_mutex);
         active_sessions[session_id] = session;
         pthread_mutex_unlock(&sessions_mutex);
         
-        return "{\"session_id\":\"" + session_id + "\",\"username\":\"" + username + "\"}";
+        return "{\"session_id\":\"" + session_id + "\",\"user_index\":" + to_string(user_index) + "}";
     }
     return "{}";
 }
